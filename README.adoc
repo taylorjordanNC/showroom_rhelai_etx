@@ -4,6 +4,8 @@ This lab provides an in-depth, hands-on experience with RHEL AI and InstructLab,
 
 This workshop is directed towards technical sales teams with overall familiarity with the command line and basic AI concepts.
 
+Testing
+
 == Getting Started
 
 === Using Containers (Recommended)
