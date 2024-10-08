@@ -1,6 +1,8 @@
-== RHEL AI and InstructLab: Get a taste in training your own model
+== RHEL AI for Emerging Tech Experience (ETX)
 
-This lab provides a hands-on experience with RHEL AI and InstructLab, guiding you through the process of understanding, training, and improving Large Language Models.
+This lab provides an in-depth, hands-on experience with RHEL AI and InstructLab, guiding you through the process of understanding, fine-tuning, and improving Large Language Models.
+
+This workshop is directed towards technical sales teams with overall familiarity with the command line and basic AI concepts.
 
 == Getting Started
 
