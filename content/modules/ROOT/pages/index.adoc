@@ -120,7 +120,9 @@ sudo su -
 [#verify_ilab]
 === Verify ilab Installation
 
-In the terminal, type in the following to see if ilab is installed properly:
+NOTE: You will be utilizing at least 2 terminal windows throughout the workshop.
+
+In one terminal, type in the following to see if ilab is installed properly:
 
 [source,console,role=execute,subs=attributes+]
 ----
@@ -202,7 +204,7 @@ lscpu
 
 The output should show the following:
 
-[source,,console]
+[source,console]
 ----
 Address sizes:                      48 bits physical, 48 bits virtual                          
 Byte Order:                         Little Endian                                              
@@ -376,7 +378,9 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ----
 
-Once the model server is up and running, enter the following commands in the other terminal window in order to chat with the base Granite model you just downloaded. 
+Now you will utilize your second terminal window that I previously mentioned you would need!
+
+Once the model server is up and running, enter the following commands in the **other** terminal window in order to chat with the base Granite model you just downloaded. 
 
 First, ensure you are running as root in this terminal window:
 
@@ -484,6 +488,8 @@ NOTE: On occasion, the Granite model can sometimes encounter a token generation 
 
 Back at the chat prompt (`>>>`) enter `/q` or `quit` to exit the session and go back to the main prompt.
 
+You may also stop serving the model in the other terminal window by hitting kbd:[CTRL+C] to stop serving the model.
+
 This model performs adequately, but you will see as you start to ask it more probing, specific questions, it will quickly show it is lacking in general knowledge. That’s because this is a base model and has been only minimally pre-trained, therefore it has little understanding of the world and our specific use case. 
 
 This is by design as it makes the model impressionable and ready to be taught the ways of the world and beloved classic movies. With that in mind, let’s set up the classroom for our base model to learn what we have to teach it.
@@ -499,7 +505,7 @@ We have the base model, but it does not have the knowledge we require in order t
 
 As you begin to run proof-of-concept activities with your customers, you will typically encounter scenarios where they have data they want to add to the large language model in a format other than what is required by RHEL AI. In order to add new knowledge, RHEL AI needs the following data:
 
-. A question and answer file in .yaml format.
+. A question and answer file in `yaml` format.
 . Documents with additional text context used during synthetic data generation in Markdown format.
 
 It is highly unlikely that your customer will already have their data in Markdown format. Therefore, you will need to perform a data transformation or data ingestion process to convert the data into a usable format for InstructLab. 
@@ -508,14 +514,14 @@ During this portion of the lab, we will convert a PDF file into Markdown, and th
 
 Before we can continue, we need to download the PDF containing detailed information about the DeLorean DMC-12 time travel vehicle. 
 
-Perform the following commands:
+Perform the following commands in either terminal window (first ensure you have stopped serving the model or have exited out of chat):
 
 [source,console,role=execute,subs=attributes+]
 ----
 cd ~
 mkdir fluxdata
 cd fluxdata
-git clone https://github.com/gshipley/fluxpdf.git
+git clone https://github.com/rhai-code/fluxpdf.git
 ----
 
 This will clone the PDF we will use to the local filesystem under the ~/fluxdata/fluxpdf directory.
@@ -635,7 +641,7 @@ The repository that contains the .md file is located at:
 
 [source,console]
 ----
-https://github.com/gshipley/fluxmd
+https://github.com/rhai-code/fluxmd
 ----
 
 ==== Creating the Questions and Answers
@@ -663,13 +669,13 @@ To save you some time, a template of the `qna.yaml` file has been provided to yo
 [source,console,role=execute,subs=attributes+]
 ----
 cd ~/fluxdata
-git clone https://github.com/gshipley/fluxmd.git
+git clone https://github.com/rhai-code/fluxmd.git
 cd fluxmd
 ----
 
 At this point in the lab, you will need to build out the `qna.yaml` file on your own, using the provided template. 
 
-A proper `qna.yaml` file should have **5** context sections and **3** question and answer pairs for each context. To get you started, here is example first section:
+A proper `qna.yaml` file should have **5** context sections and **3** question and answer pairs for each context. To get you started, here is an example first section:
 
 [source,yaml]
 ----
@@ -835,7 +841,6 @@ rm /root/.local/share/instructlab/taxonomy/compositional_skills/grounded/linguis
 rm /root/.local/share/instructlab/taxonomy/compositional_skills/writing/grounded/editing/content/qna.yaml
 rm /root/.local/share/instructlab/taxonomy/knowledge/science/animals/birds/black_capped_chickadee/qna.yaml
 rm /root/.local/share/instructlab/taxonomy/compositional_skills/general/synonyms/qna.yaml
-rm /root/.local/share/instructlab/taxonomy/knowledge/science/animals/birds/black_capped_chickadee/attribution.txt
 ----
 
 Now that your local taxonomy contains your new Parasol claims `qna.yaml` addition, and you have cleared all the sample files, you can confirm that the data addition was done correctly by entering the following command:
@@ -1061,7 +1066,7 @@ Luckily, we have written a small python script to parse the contents of a SDG fi
 [source,console, role=execute, subs=attributes+]
 ----
 cd ~/fluxdata
-git clone https://github.com/gshipley/sdgparser.git
+git clone https://github.com/rhai-code/sdgparser.git
 cd sdgparser
 python sdgparse.py python sdgparse.py ~/.local/share/instructlab/datasets/knowledge_train_msgs_[TIMESTAMP.jsonl |less
 ----
@@ -1238,7 +1243,7 @@ You then should see the following response indicating that you are back in chat 
 
 Now let’s ask,
 
-  >>> How much does it cost to replace a flux capacitor in millions of dollars?
+  >>> How much does it cost to replace a flux capacitor in a DeLorean DMC-12 in millions of dollars?
 
 You should see a more coherent and concise answer.
 
@@ -1255,4 +1260,70 @@ You should see a more coherent and concise answer.
 ╰─────────────────────────────────────────────────────────────────────── elapsed 0.217 seconds ─╯
 ----
 
+This performs fairly well. However, if you play with it a bit, the responses may still be inconsistent.
 
+The only way to have a production-ready model is to do a full multi-phased training run.
+
+=== Fully Training the Model
+
+In a production environment, neither of the models we've created thus far would work. They would confuse users, spread misinformation, and generally lead to trouble. This underscores the importance of running the entire training cycle. 
+
+Customers are accustomed to models that know a lot about practically everything. These large commercial models (GPT-4, Claude, Gemini, etc.) are trained for months, at costs estimated to be in the hundreds of millions of dollars. Not to mention the amount of physical resources training models at this scale requires.
+
+With Granite and RHEL AI, we are shifting focus to smaller LLMs, which are more easily fine-tuned to specific use cases. Because they have less pre-training data, it is easier to change their mind and add new information.
+
+During this workshop, we do not have time available to experience the joy and excitement of waiting for a full training process to execute. We will give you a fully-trained model, ready to go, for the remainder of this lab. 
+
+However, we want you to understand, at a high level, what a “full training process” is composed of. 
+
+There are two primary phases:
+
+* **Phase 1**: We take the starter model (granite-7b-starter), and fine-tune it with the synthetic knowledge dataset produced from SDG. This training process outputs 4 model ‘checkpoints’. The checkpoints are evaluated. The best model checkpoint goes to Phase 2.
+
+* **Phase 2**: Our model output from phase 1 is now trained on skills data. This skills data is based on data pre-loaded into the RHEL AI product and is focused on ensuring our final model can process, understand, and answer in the most accurate way from the given context. This process outputs 4 new checkpoints. The checkpoints are again evaluated and the ‘best’ one becomes our final model.
+
+The time this takes varies based on infrastructure. Check out our https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_ai/1.1/html/creating_a_custom_llm_using_rhel_ai/train_and_eval#training_process[official documentation] to review the command line process for training. 
+
+Now, let’s try the model we have trained for you.
+
+== Try the Fully Trained Model
+
+Our fully trained model is cached alongside our other models in the `/root/.cache/instructlab/models` directory.
+
+Let's serve and chat with our fully trained model as we've done before:
+
+[source,console, role=execute, subs=attributes+]
+----
+ilab model serve --model-path /root/.cache/instructlab/models/thegshipley/fluxcapacitor
+----
+
+In the other terminal window, issue the `chat` command once again:
+
+[source,console, role=execute, subs=attributes+]
+----
+ilab model chat --model /root/.cache/instructlab/models/thegshipley/fluxcapacitor
+----
+
+Test it out with the same questions. What do you think? 
+
+== Conclusion
+
+Great job! 
+
+The goal here was to get you familiar with the process and hardware needed to fine-tune a LLM via the LAB method and RHEL AI. In that regard, mission accomplished! 
+
+Now that you have gotten a taste of AI engineering, you're likely curious about where to go next. 
+
+The next step in your ETX journey is to take the model and serve it from RHOAI as part of a larger application. The following lab will guide you through those steps.
+
+Beyond ETX, we recommend that you start playing with both skill and knowledge additions. This is to give something "new" to the model. Give the model a chunk of data, something it doesn’t know about, and then train it on that. 
+
+Also, start thinking about how RHEL AI trained models can help your customers achieve their business goals.
+
+As you can see, InstructLab is pretty straightforward. Most of the time you spend will be on curating new model training data. Again, we’re so happy you made it this far, and remember if you have questions we are here to help, and are excited to see what you come up with!
+
+Please visit the official http://www.github.com/instructlab[GitHub project] and check out the community repo to learn about how to get involved with the upstream community! 
+
+Also, learn more about RHEL AI here by reading our https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_ai/[official documentation] and feel free to reach out to the RHEL AI Technical Marketing Team to answer any questions that may come up.
+
+Now let's go to Red Hat OpenShift AI! 
