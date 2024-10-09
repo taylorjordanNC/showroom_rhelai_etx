@@ -5,6 +5,7 @@
 :toc: false
 :numbered: true
 
+[#intro]
 == Introduction to the Lab
 
 Thanks for taking the time to learn about and use RHEL AI at Red Hat Emerging Tech Exchange (ETX). 
@@ -97,7 +98,7 @@ InstructLab leverages a taxonomy-guided synthetic data generation (SDG) process 
 
 InstructLab uses an LLM during the process of synthetic data generation, the output of which is used to fine-tune the starter model. This alignment phase becomes most user’s starting point for contributing their knowledge.  Prior to the LAB technique, users typically had no direct involvement in training a LLM. I know this may sound complicated, but hang in there. You will see how easy this is to use.
 
-
+[#skills_knowledge]
 === Skills and Knowledge
 
 As you work with InstructLab, you will see the terms *_Skills_* and *_Knowledge_*. What is the difference between Skills and Knowledge? A simple analogy is to think of a skill as [.underline]#teaching someone how# to fish. Knowledge, on the other hand, is [.underline]#knowing# that the best place to catch a Bass is when the sun is setting while casting your line near the trunk of a tree along the bank.
@@ -365,7 +366,7 @@ Once the download completes, enter `ilab model list` into the terminal. You shou
 +-----------------------------------+---------------------+---------+
 ----
 
-[#serve]
+[#serve_base]
 === Serve and Chat with the Base Model
 
 When the download completes, you have a model that you can serve and chat with locally.
@@ -507,8 +508,10 @@ This is by design as it makes the model impressionable and ready to be taught th
 
 We have the base model, but it does not have the knowledge we require in order to do our job as a claims agent. We need more information to process this claim for the Flux Capacitor on a DeLorean DMC-12! In order to get the model up to speed on all things Delorean, we need to teach it what we need it to know.  
 
+[#prep_data]
 === Preparing the Data
 
+[#doc_convert]
 ==== Document Conversion
 
 As you begin to run proof-of-concept activities with your customers, you will typically encounter scenarios where they have data they want to add to the large language model in a format other than what is required by RHEL AI. In order to add new knowledge, RHEL AI needs the following data:
@@ -652,6 +655,7 @@ The repository that contains the .md file is located at:
 https://github.com/rhai-code/fluxmd
 ----
 
+[#q&a]
 ==== Creating the Questions and Answers
 
 Now that we have our Markdown file in a git repository, the next step we need to take is to create a `qna.yaml` file. 
@@ -735,6 +739,7 @@ https://raw.githubusercontent.com/rhai-code/backToTheFuture/refs/heads/main/qna.
 
 During the next section of this lab, we will clone the repository containing this file that we will proceed to use for the remainder of the workshop.
 
+[#github_data]
 === Getting the Training Data
 
 Now that we have learned what it is like to prepare our own dataset, we will obtain our prepared and tested data from GitHub to move forward.
@@ -784,7 +789,7 @@ As we've learned, the `qna.yaml` file consists of a list of context chunks and Q
 
 Now we are going to leverage the taxonomy structure to teach the starter model more detailed knowledge about the flux capacitor that we need for our insurance claims job at Parasol.
 
-
+[#prepare_taxonomy]
 === Setting Up the Taxonomy
 
 InstructLab uses a novel synthetic data-based alignment tuning method for Large Language Models (LLMs.) The "lab" in InstructLab stands for **Large-scale Alignment for chatBots**. The LAB method is driven by taxonomies, which are largely created manually and with care.
@@ -870,6 +875,7 @@ NOTE: If you leave the sample files in the taxonomy directory, they will appear 
 
 With your local taxonomy data prepared, it is now time to download the other models and  tools needed for synthetic data generation, model training, and model evaluation.
 
+[#all_models]
 === Downloading the Models Needed for Synthetic Data Generation, Training, and Evaluation
 
 The first model to download is the **Teacher and Critic model** for the SDG (Synthetic Data Generation) phase of the training by entering the following:
@@ -1048,6 +1054,7 @@ INFO 2024-09-28 03:17:58,069 instructlab.sdg:438: Generation took 302.55s
 INFO 2024-09-28 03:18:04,395 instructlab.model.backends.backends:351: Waiting for GPU VRAM reclamation...
 ----
 
+[#view_sd]
 === Viewing your New Synthetic Dataset
 
 Let’s take a look at the generated data. The SDG process creates a JSONL file located at 
@@ -1128,11 +1135,12 @@ Pretty neat!
 
 Now, let’s use this large synthetic dataset to fine-tune the model.  
 
-[#fine-tune]
+[#ft_model]
 == Fine-Tuning the Model
 
 Training using the newly generated data is a time and resource intensive task. Depending on the number of epochs desired, internet connection for safetensor downloading, and other factors, it can take hours or days to really fine tune the model. It is not required to train the model to continue with the lab as we will use an already trained model.
 
+[#one_epoch]
 === Running One Epoch
 
 Due to the time constraints of this lab, we are not able to fully fine-tune our model. While a fully tuned and trained model will be provided to you, we want you to understand what happens during a real training process.
@@ -1202,6 +1210,7 @@ Clearly, one epoch won’t cut it.
 
 Let’s take inspiration from another 1980s classic movie and turn it up to eleven!
 
+[#11_epochs]
 === Turning it up to Eleven!
 
 Enter the following command to train for 11 epochs:
@@ -1272,6 +1281,7 @@ This performs fairly well. However, if you play with it a bit, the responses may
 
 The only way to have a production-ready model is to do a full multi-phased training run.
 
+[#full_train]
 === Fully Training the Model
 
 In a production environment, neither of the models we've created thus far would work. They would confuse users, spread misinformation, and generally lead to trouble. This underscores the importance of running the entire training cycle. 
@@ -1294,6 +1304,7 @@ The time this takes varies based on infrastructure. Check out our https://docs.r
 
 Now, let’s try the model we have trained for you.
 
+[#fully_trained_model]
 == Try the Fully Trained Model
 
 Our fully trained model is cached alongside our other models in the `/root/.cache/instructlab/models` directory.
@@ -1314,6 +1325,7 @@ ilab model chat --model /root/.cache/instructlab/models/thegshipley/fluxcapacito
 
 Test it out with the same questions. What do you think? 
 
+[#conclusion]
 == Conclusion
 
 Great job! 
