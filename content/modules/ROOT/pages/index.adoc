@@ -11,7 +11,15 @@ Thanks for taking the time to learn about and use RHEL AI at Red Hat Emerging Te
 
 During this lab experience, you will learn how to create a fine-tuned version of an IBM Granite model for a fictional insurance company, **Parasol**. You will then deploy this newly enhanced model in RHEL AI. In another lab environment, you will then migrate this model to Red Hat OpenShift AI to complete the RHOAI portion of the lab training. 
 
-By the end of this RHEL AI portion of the hands-on workshop, you will know what https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/ai[RHEL AI] is and how you can use it to provide value to our customers. You will also understand to leverage RHEL AI to improve a Large Language Model (LLM), and fine-tune it using synthetic data generation.  
+By the end of this RHEL AI portion of the hands-on workshop, you will know what https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/ai[RHEL AI] is and how you can use it to provide value to our customers. You will also understand to leverage RHEL AI to improve a Large Language Model (LLM), and fine-tune it using synthetic data generation. 
+
+=== Setting Up Your Terminals
+
+To complete the lab you need two terminal windows.
+
+Open two individual terminal tabs or windows and SSH into the demo environments:
+
+From each terminal, enter: **{ssh_command}**, and use **{ssh_password}** for the password to login.
 
 [#rhelai]
 == What is RHEL AI?
