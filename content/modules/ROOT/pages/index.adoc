@@ -613,7 +613,7 @@ INFO:docling.cli.main:All documents were converted in 4.33 seconds.
 
 This created a Markdown file in the ~/fluxdata/docling directory called `flux.md`. That is called **WINNING**.
 
-Now that we done with our document conversion, we can exit out of the container by simply typing the exit command:
+Now that we done with our document conversion, we can exit out of the shell by simply typing the exit command:
 
 [source,console,role=execute,subs=attributes+]
 ----
@@ -716,15 +716,9 @@ seed_examples:
 
 Continue building out the rest of your `qna.yaml` file by providing **4** additional context blocks with questions and answers as outlined in the `qna.yaml` template file. Use your favorite terminal-based text editor (the correct one is vi).
 
-**Have FUN!**
+**Have FUN!** We'll wait for you.
 
-Jeapardy music playing...
-
-Jeapardy music playing...
-
-Jeapardy music playing...
-
-Okay, a valiant effort. 
+'''
 
 We know this process is tedious and is where people will spend the most amount of time. We have improvements in our product roadmap to make this data conversion process easier for customers.
 
@@ -955,7 +949,7 @@ drwxr-xr-x. 2 root root 4096 Sep 24 15:20 prometheus-8x7b-v2-0
 drwxr-xr-x. 2 root root 4096 Sep 24 15:23 skills-adapter-v3
 ----
 
-For a more detailed description of the models, please refer to the https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_ai/1.1/html/building_your_rhel_ai_environment/downloading_ad_models#downloading_ad_models[RHEL 1.1 documentation].
+For a more detailed description of the models, please refer to the https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_ai/1.1/html/building_your_rhel_ai_environment/downloading_ad_models#downloading_ad_models[RHEL AI documentation].
 
 [#sdg]
 == Generating Synthetic Data
@@ -1083,7 +1077,7 @@ Luckily, we have written a small python script to parse the contents of a SDG fi
 cd ~/fluxdata
 git clone https://github.com/rhai-code/sdgparser.git
 cd sdgparser
-python sdgparse.py python sdgparse.py ~/.local/share/instructlab/datasets/knowledge_train_msgs_[TIMESTAMP.jsonl |less
+python sdgparse.py ~/.local/share/instructlab/datasets/knowledge_train_msgs_[TIMESTAMP.jsonl |less
 ----
 
 For example, you would enter in the following command to parse the contents of a file named `knowledge_train_msgs_2024-09-29T19_03_56.jsonl`
