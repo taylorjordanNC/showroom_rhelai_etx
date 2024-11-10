@@ -1,6 +1,6 @@
 ---
 site:
-  title: Summit Connect - RHEL AI & InstructLab
+  title: Advanced RHEL AI Workshop
   start_page: modules::index.adoc
 
 content:

@@ -108,14 +108,14 @@ As you work with InstructLab, you will see the terms *_Skills_* and *_Knowledge_
 
 === Prerequisites for Running InstructLab
 
-The systems you are using during this workshop are hosted on demo.redhat.com, our Red Hat Demo Platform. We are using the default RHEL AI image (leveraging Image Mode RHEL technology) deployed on a machine with adequate storage and 4 NVIDIA L40 GPUs.
+The systems you are using during this workshop are hosted on demo.redhat.com, our Red Hat Demo Platform. We are using the default RHEL AI image (leveraging Image Mode RHEL technology) deployed on a machine with adequate storage and 4 NVIDIA L40S GPUs.
 
 As we go through the lab, you will gain a better understanding of disk space and GPU requirements for real world scenarios for your customers. As an example, we require 200GB of disk space just to download the models before even beginning to think about model training. 
 
 === Special Note for this Version of RHEL AI
 To save time, we recommend running everything as `root`. 
 
-There is a temporary UX issue where every time a command is run, the processing time is long due to an underlying process where the instructlab image is duplicated for the user. Running as root is a workaround. An enhancement will be implemented in RHEL AI 1.2 to address this issue.
+There is a temporary UX issue where every time a command is run, the processing time is long due to an underlying process where the instructlab image is duplicated for the user. Running as root is a workaround. An enhancement will be implemented in a future release to address this issue.
 
 NOTE: Even when running as `root` user, the first time you run the ilab command line tool will take 8-10 seconds. This is because it is creating a container that contains the ilab binaries.
 
@@ -145,7 +145,7 @@ That was quite of bit of information! Let’s do a version check by entering:
 ilab --version
 ----
 
-The response text should indicate that you are running **version 0.18.4**. If you see a different version, please tell your lab proctor.
+The response text should indicate that you are running **version 0.19.3**. If you see a different version, please tell your lab proctor.
 
 
 [#view_resources]
@@ -261,24 +261,9 @@ With everything in place and working, it is time to initialize InstructLab. Go t
 ilab config init
 ----
 
-During the configuration, select the profile that most closely matches your system's configuration:
+During the configuration, RHEL AI will detect the hardware profile we are using. Confirm it is correct by typing `Y`.
 
-[source,console]
-----
-Please choose a train profile to use:
-
-[0] No profile (CPU-only)
-[1] A100_H100_x2.yaml
-[2] A100_H100_x4.yaml
-[3] A100_H100_x8.yaml
-[4] L40_x4.yaml
-[5] L40_x8.yaml
-[6] L4_x8.yaml
-----
-
-As you saw already, for the purposes of this lab we are using **4xL40** GPUs. So, please enter the number **4**.
-
-A few things happen during initialization. A taxonomy is generated and a configuration file (`config.yaml`) is created in the `/root/.config/instructlab/` directory.
+A few things happen during initialization. A taxonomy is generated, a configuration file (`config.yaml`) is created in the `/root/.config/instructlab/` directory, and the appropriate training profile is selected to be used during the fine-tuning process.
 
 Let's take a look at this configuration file. Enter the following command:
 
@@ -312,7 +297,7 @@ _Figure 2: New Registry Service Account form._
 NOTE: If you receive a `terms required` error, then click on `Please accept Red Hat's Terms and Conditions` to launch the acceptance process. Read through these terms and accept them. Close the newly created browser tab. 
 
 image::termserror.png[]
-_Figure 3: If you have not accepted the terms and conditions on this login, then you will need to accept them. 
+_Figure 3: If you have not accepted the terms and conditions on this login, then you will need to accept them._ 
 
 Once completed, your screen will look something like the following screenshot:
 
@@ -353,9 +338,9 @@ Enter the following command:
 ilab model download --repository docker://registry.redhat.io/rhelai1/granite-7b-starter --release latest
 ----
 
-This will take several minutes.
+This will only take a moment as we have pre-downloaded the models to your system. We want you to go through the motions so you understand the process.
 
-Once the download completes, enter `ilab model list` into the terminal. You should see results similar to the image below.
+Once the download completes, enter `ilab model list` into the terminal. You should see results similar to the image below in addition to the other preset models.
 
 [source,console]
 ----
@@ -552,7 +537,7 @@ This new tool is called https://github.com/DS4SD/docling[**Docling**] and is fre
 
 In order to use **Docling**, we need to install it. However, RHEL AI ships with Python 3.9 and docling requires at least Python version 3.10. What should we do?
 
-In a real world environment you would never use your RHEL AI system to do your document conversion. However, for the purpose of this lab, we are going to use the tools we have available and perform the document conversion in a container that satisfies the dependencies needed. Please feel free to do this on your local machine as well instead of using the container.
+For the purpose of this lab, we are going to use the tools we have available and perform the document conversion in a container that satisfies the dependencies needed. In near-future releases these document conversion capabilities will be embedded into our product.
 
 Issue the following command:
 
@@ -572,7 +557,7 @@ mkdir docling
 cd docling
 python3.11 -m venv venv
 source venv/bin/activate
-pip install docling
+pip install docling==1.20
 ----
 
 This will take a few minutes to complete. At the end of the install process, you will have Docling available to use as a Python package. 
@@ -613,7 +598,7 @@ INFO:docling.cli.main:All documents were converted in 4.33 seconds.
 
 This created a Markdown file in the ~/fluxdata/docling directory called `flux.md`. That is called **WINNING**.
 
-Now that we done with our document conversion, we can exit out of the shell by simply typing the exit command:
+Now that we done with our document conversion, you must exit out of the shell to proceed with the rest of the lab. Simply type the exit command:
 
 [source,console,role=execute,subs=attributes+]
 ----
@@ -836,21 +821,7 @@ Verify the file was copied successfully:
 cat /root/.local/share/instructlab/taxonomy/knowledge/parasol/claims/qna.yaml | head
 ----
 
-The taxonomy directory also contains five additional sample files. These are example files for our customers.
-
-While you could leave them in, customers will likely remove these files and doing so speeds up the synthetic data generation (SDG) process. In testing, we have noted that removing the files reduces the time from 45 minutes to around 7 minutes.
-
-Run the following commands to delete the sample files:
-
-[source,console,role=execute,subs=attributes+]
-----
-rm /root/.local/share/instructlab/taxonomy/compositional_skills/grounded/linguistics/inclusion/qna.yaml
-rm /root/.local/share/instructlab/taxonomy/compositional_skills/writing/grounded/editing/content/qna.yaml
-rm /root/.local/share/instructlab/taxonomy/knowledge/science/animals/birds/black_capped_chickadee/qna.yaml
-rm /root/.local/share/instructlab/taxonomy/compositional_skills/general/synonyms/qna.yaml
-----
-
-Now that your local taxonomy contains your new Parasol claims `qna.yaml` addition, and you have cleared all the sample files, you can confirm that the data addition was done correctly by entering the following command:
+Now that your local taxonomy contains your new Parasol claims `qna.yaml` addition, you can confirm that the data addition was done correctly by entering the following command:
 
 [source,console,role=execute,subs=attributes+]
 ----
@@ -865,7 +836,9 @@ knowledge/parasol/claims/qna.yaml
 Taxonomy in /root/.local/share/instructlab/taxonomy is valid :)
 ----
 
-NOTE: If you leave the sample files in the taxonomy directory, they will appear in the results. If you have no files in the taxonomy directory structure, the SDG process will throw an error stating that there are `No New Leaf Nodes in the Taxonomy`.
+You should see several other files listed in the above output in addition to our parasol file. These are sample files for customers to follow as examples. While you could leave them in, customers will likely remove these files and doing so speeds up the synthetic data generation (SDG) process. In testing, we have noted that removing the files reduces the time from 45 minutes to around 7 minutes.
+
+NOTE: Please remove all files that are displayed in the output of the `ilab taxonomy diff` command **except** for our parasol qna.yaml file. If you do not see your parasol file please check that the file was added correctly.
 
 With your local taxonomy data prepared, it is now time to download the other models and  tools needed for synthetic data generation, model training, and model evaluation.
 
@@ -911,7 +884,7 @@ Finally, we will download the **Judge model** for multi-phase training and evalu
 ilab model download --repository docker://registry.redhat.io/rhelai1/prometheus-8x7b-v2-0 --release latest 
 ----
 
-Enter `ilab model list` to see the downloaded models. The two LoRA adapters will not display in this command as they are not models, but are each a layer used with an existing model.
+Enter `ilab model list` to see the downloaded models. The two LoRA adapters will not display in this command as they are not models, but are each a layer used for our Mixtral model to enhance the SDG process. 
 
 [source,console,role=execute,subs=attributes+]
 ----
@@ -958,7 +931,9 @@ Now, let’s move on to the innovative component that sets InstructLab, particul
 
 For this workshop, we are showing you the optimal experience we expect customers to use for production. With a nicely-specced enterprise-grade GPU-accelerated machine the synthetic generation step takes around 10-15 minutes.  These are the machines we have selected for this workshop.
 
-We will now run the command to generate synthetic data. If either terminal is still serving the Granite model or running a process, kill that process by entering kbd:[CTRL+C]. We need all GPU memory to generate synthetic data. 
+We will now run the command to generate synthetic data. 
+
+NOTE: If either terminal is still serving the Granite model or running a process, kill that process by entering kbd:[CTRL+C]. The data generation will fail if a model is running.
 
 Enter the following command:
 
@@ -1127,6 +1102,8 @@ Answer: An engine rebuild for a DeLorean DMC-12 costs between $5,000 to $7,000.
 
 Pretty neat!
 
+NOTE: The parser is not officially provided from engineering, we created this for our training session. Thus, it is likely imperfect.
+
 Now, let’s use this large synthetic dataset to fine-tune the model.  
 
 [#ft_model]
@@ -1145,7 +1122,7 @@ The following command will perform one epoch of fine-tuning. It should take seve
 
 [source,console, role=execute, subs=attributes+]
 ----
-ilab model train --data-path  /root/.local/share/instructlab/datasets/knowledge_train_msgs_[timestamp].jsonl --num-epochs 1 
+ilab model train --data-path  /root/.local/share/instructlab/datasets/knowledge_train_msgs_[timestamp].jsonl --num-epochs 1 --device=cuda
 ----
 
 In several minutes, you should see the following which indicates that the training is complete.
@@ -1211,7 +1188,7 @@ Enter the following command to train for 11 epochs:
 
 [source,console, role=execute, subs=attributes+]
 ----
-ilab model train --data-path  /root/.local/share/instructlab/datasets/knowledge_train_msgs_[TIMESTAMP].jsonl --num-epochs 11 
+ilab model train --data-path  /root/.local/share/instructlab/datasets/knowledge_train_msgs_[TIMESTAMP].jsonl --num-epochs 11 --device=cuda
 ----
 
 This can take up to 20 to 30 minutes to complete.  You can keep tabs on which epoch the system is working on by reading the console output which will report on the state of the training process.
@@ -1286,13 +1263,13 @@ With Granite and RHEL AI, we are shifting focus to smaller LLMs, which are more 
 
 During this workshop, we do not have time available to experience the joy and excitement of waiting for a full training process to execute. We will give you a fully-trained model, ready to go, for the remainder of this lab. 
 
-However, we want you to understand, at a high level, what a “full training process” is composed of. 
+However, we want you to understand, at a high level, what a “full training process” is as this is what customers should be running. 
 
-There are two primary phases:
+Our RHEL AI training is a multi-phase training strategy. There are two phases:
 
-* **Phase 1**: We take the starter model (granite-7b-starter), and fine-tune it with the synthetic knowledge dataset produced from SDG. This training process outputs 4 model ‘checkpoints’. The checkpoints are evaluated. The best model checkpoint goes to Phase 2.
+* **Phase 1**: We take the starter model (granite-7b-starter), and fine-tune it with the synthetic knowledge dataset produced from SDG. This training process outputs a model ‘checkpoint’ after each epoch of training. The checkpoints are evaluated by Prometheus using standard LLM benchmarks. The best model checkpoint goes to Phase 2.
 
-* **Phase 2**: Our model output from phase 1 is now trained on skills data. This skills data is based on data pre-loaded into the RHEL AI product and is focused on ensuring our final model can process, understand, and answer in the most accurate way from the given context. This process outputs 4 new checkpoints. The checkpoints are again evaluated and the ‘best’ one becomes our final model.
+* **Phase 2**: Our model output from phase 1 is now trained on skills data. This skills data is based on data pre-loaded into the RHEL AI product and is focused on ensuring our final model can process, understand, and answer in the most accurate way from the given context. This process outputs new checkpoints for each epoch that runs. The checkpoints can at this point be evaluated by the customer and the ‘best’ one becomes our final model.
 
 The time this takes varies based on infrastructure. Check out our https://docs.redhat.com/en/documentation/red_hat_enterprise_linux_ai/1.1/html/creating_a_custom_llm_using_rhel_ai/train_and_eval#training_process[official documentation] to review the command line process for training. 
 
